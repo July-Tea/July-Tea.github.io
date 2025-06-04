@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="题目描述给定一个整数数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。 限制条件 必须原地操作，不得使用额外的数组。 保持非零元素的相对顺序。 最小化操作次数。   示例输入: nums &#x3D; [0,1,0,3,12] 输出: [1,3,12,0,0]  初始解法（remove + push）1234567891011121314151617181920">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【算法学习】二、移动零（Rust 解法）">
+<meta property="og:url" content="https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/index.html">
+<meta property="og:site_name" content="Have a seat, Please">
+<meta property="og:description" content="题目描述给定一个整数数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。 限制条件 必须原地操作，不得使用额外的数组。 保持非零元素的相对顺序。 最小化操作次数。   示例输入: nums &#x3D; [0,1,0,3,12] 输出: [1,3,12,0,0]  初始解法（remove + push）1234567891011121314151617181920">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-06-04T07:06:54.000Z">
+<meta property="article:modified_time" content="2025-06-04T07:23:41.894Z">
+<meta property="article:author" content="July Tea">
+<meta property="article:tag" content="Learning">
+<meta property="article:tag" content="Two Pointers">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/tea.svg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/tea.svg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/tea.svg">
+        
+      
+    
+    <!-- title -->
+    <title>【算法学习】二、移动零（Rust 解法）</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Category</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/July-Tea">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/06/03/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%B8%80%E3%80%81%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&text=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&is_video=false&description=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=【算法学习】二、移动零（Rust 解法）&body=Check out this article: https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&name=【算法学习】二、移动零（Rust 解法）&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&t=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">限制条件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E8%A7%A3%E6%B3%95%EF%BC%88remove-push%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">初始解法（remove + push）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9A"><span class="toc-number">3.1.</span> <span class="toc-text">问题：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E8%A7%A3%E6%B3%95%EF%BC%9A%E5%8F%8C%E6%8C%87%E9%92%88-%E5%8E%9F%E5%9C%B0%E4%BA%A4%E6%8D%A2"><span class="toc-number">4.</span> <span class="toc-text">改进解法：双指针 + 原地交换</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">4.1.</span> <span class="toc-text">作用方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rust-%E9%A2%9D%E5%A4%96%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">Rust 额外知识点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83-%E5%80%9F%E7%94%A8"><span class="toc-number">5.1.</span> <span class="toc-text">所有权 &amp; 借用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E8%BE%B9%E9%81%8D%E5%8E%86%E8%BE%B9-remove%EF%BC%9F"><span class="toc-number">5.2.</span> <span class="toc-text">为什么不能边遍历边 remove？</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        【算法学习】二、移动零（Rust 解法）
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">July Tea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-06-04T07:06:54.000Z" class="dt-published" itemprop="datePublished">2025-06-04</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Algorithms/">Algorithms</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Learning/" rel="tag">Learning</a>, <a class="p-category" href="/tags/Two-Pointers/" rel="tag">Two Pointers</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>给定一个整数数组 <code>nums</code>，编写一个函数将所有 <code>0</code> 移动到数组的末尾，同时保持非零元素的相对顺序。</p>
+<h3 id="限制条件"><a href="#限制条件" class="headerlink" title="限制条件"></a>限制条件</h3><ul>
+<li>必须<strong>原地操作</strong>，不得使用额外的数组。</li>
+<li>保持非零元素的相对顺序。</li>
+<li>最小化操作次数。</li>
+</ul>
+<hr>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>输入: nums &#x3D; [0,1,0,3,12]</p>
+<p>输出: [1,3,12,0,0]</p>
+<hr>
+<h2 id="初始解法（remove-push）"><a href="#初始解法（remove-push）" class="headerlink" title="初始解法（remove + push）"></a>初始解法（remove + push）</h2><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Solution</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">move_zeroes</span>(nums: &amp;<span class="keyword">mut</span> <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;) &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">i</span> = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">zero_count</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> i &lt; nums.<span class="title function_ invoke__">len</span>() &#123;</span><br><span class="line">            <span class="keyword">if</span> nums[i] == <span class="number">0</span> &#123;</span><br><span class="line">                zero_count += <span class="number">1</span>;</span><br><span class="line">                nums.<span class="title function_ invoke__">remove</span>(i);  <span class="comment">// O(n) 操作，非常耗性能</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                i += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">_i</span> <span class="keyword">in</span> <span class="number">0</span>..zero_count &#123;</span><br><span class="line">            nums.<span class="title function_ invoke__">push</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">list</span> = <span class="built_in">vec!</span>[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">0</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">0</span>, <span class="number">9</span>];</span><br><span class="line">    Solution::<span class="title function_ invoke__">move_zeroes</span>(&amp;<span class="keyword">mut</span> list);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, list)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="问题："><a href="#问题：" class="headerlink" title="问题："></a>问题：</h3><ul>
+<li><code>remove(i)</code> 是线性时间复杂度（O(n)），每次都会移动整个后缀数组。</li>
+<li>多次调用 <code>remove</code> 导致整体性能极差，<strong>时间复杂度退化为 O(n²)</strong>。</li>
+<li>实测大数组下性能很差，几乎不可用。</li>
+</ul>
+<hr>
+<h2 id="改进解法：双指针-原地交换"><a href="#改进解法：双指针-原地交换" class="headerlink" title="改进解法：双指针 + 原地交换"></a>改进解法：双指针 + 原地交换</h2><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Solution</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">move_zeroes</span>(nums: &amp;<span class="keyword">mut</span> <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;) &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">slow</span> = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">fast</span> <span class="keyword">in</span> <span class="number">0</span>..nums.<span class="title function_ invoke__">len</span>() &#123;</span><br><span class="line">            <span class="keyword">if</span> nums[fast] != <span class="number">0</span> &#123;</span><br><span class="line">                nums.<span class="title function_ invoke__">swap</span>(slow, fast);  <span class="comment">// 非 0 移到前面</span></span><br><span class="line">                slow += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">list</span> = <span class="built_in">vec!</span>[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">0</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">0</span>, <span class="number">9</span>];</span><br><span class="line">    Solution::<span class="title function_ invoke__">move_zeroes</span>(&amp;<span class="keyword">mut</span> list);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;:?&#125;&quot;</span>, list)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="作用方式"><a href="#作用方式" class="headerlink" title="作用方式"></a>作用方式</h3><blockquote>
+<p>slow 会一直停在前面，等着 fast 找到非零的数。一旦找到了，就把它俩交换，把非零数往前搬。比如第一次遇到非零数时，slow &#x3D; 0，fast &#x3D; N，交换之后，非零数就被放到了最前面，然后 slow 向前一步，fast 继续扫后面的数。</p>
+</blockquote>
+<hr>
+<h2 id="Rust-额外知识点"><a href="#Rust-额外知识点" class="headerlink" title="Rust 额外知识点"></a>Rust 额外知识点</h2><h3 id="所有权-借用"><a href="#所有权-借用" class="headerlink" title="所有权 &amp; 借用"></a>所有权 &amp; 借用</h3><blockquote>
+<p>在同一作用域中同时只能存在：一个可变引用 或 一个&#x2F;多个不可变借用</p>
+</blockquote>
+<p>在 Rust 中，每个值都有一个所有者（<code>owner</code>），一个值<strong>在同一时刻只能被一个可变引用或多个不可变引用借用</strong>。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">move_zeroes</span>(nums: &amp;<span class="keyword">mut</span> <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt;) <span class="comment">// 可变引用 &amp;mut Vec</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>&amp;mut</code>：表示你拿的是 <code>nums</code> 的 <strong>可变引用</strong>。</li>
+<li><strong>你只能有一个 <code>&amp;mut</code> 引用同时存在</strong>，否则 Rust 会报错。</li>
+</ul>
+<hr>
+<h3 id="为什么不能边遍历边-remove？"><a href="#为什么不能边遍历边-remove？" class="headerlink" title="为什么不能边遍历边 remove？"></a>为什么不能边遍历边 remove？</h3><p>最开始的写法：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (index, &amp;num) <span class="keyword">in</span> nums.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">enumerate</span>() &#123;</span><br><span class="line">    <span class="keyword">if</span> num == <span class="number">0</span> &#123;</span><br><span class="line">        nums.<span class="title function_ invoke__">remove</span>(index);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>❌ 错在：<code>nums.iter().enumerate()</code> 返回的是 <code>&amp;num</code>（不可变借用），但 <code>remove</code> 需要修改 <code>nums</code>（需要可变借用）！</p>
+<p>Rust 不允许同一作用域同时存在 <code>&amp;nums</code> 和 <code>&amp;mut nums</code>，因为这可能导致<strong>数据竞争</strong>或内存错误。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/categories/">Category</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/July-Tea">Projects</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%90%E5%88%B6%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">限制条件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E8%A7%A3%E6%B3%95%EF%BC%88remove-push%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">初始解法（remove + push）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%EF%BC%9A"><span class="toc-number">3.1.</span> <span class="toc-text">问题：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B%E8%A7%A3%E6%B3%95%EF%BC%9A%E5%8F%8C%E6%8C%87%E9%92%88-%E5%8E%9F%E5%9C%B0%E4%BA%A4%E6%8D%A2"><span class="toc-number">4.</span> <span class="toc-text">改进解法：双指针 + 原地交换</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">4.1.</span> <span class="toc-text">作用方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rust-%E9%A2%9D%E5%A4%96%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">Rust 额外知识点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83-%E5%80%9F%E7%94%A8"><span class="toc-number">5.1.</span> <span class="toc-text">所有权 &amp; 借用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E8%BE%B9%E9%81%8D%E5%8E%86%E8%BE%B9-remove%EF%BC%9F"><span class="toc-number">5.2.</span> <span class="toc-text">为什么不能边遍历边 remove？</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&text=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&is_video=false&description=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=【算法学习】二、移动零（Rust 解法）&body=Check out this article: https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&name=【算法学习】二、移动零（Rust 解法）&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://july-tea.github.io/2025/06/04/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%8C%E3%80%81%E7%A7%BB%E5%8A%A8%E9%9B%B6%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&t=【算法学习】二、移动零（Rust 解法）"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2025
+    July Tea
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Category</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/July-Tea">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
