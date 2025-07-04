@@ -14,7 +14,7 @@
 <meta property="og:description" content="本文记录了在 macOS 系统下安装 Neovim 并配置 LazyVim（一个优秀的 Neovim 发行版）的完整流程，包含必要的依赖安装、插件管理及个性化按键设置。 一、安装 Neovim推荐使用 Homebrew 进行安装，命令简洁高效： 1brew install neovim  二、安装 LazyVim StarterLazyVim 提供了便捷的启动配置。请参考其官方仓库 LazyVim">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-07-04T03:04:00.000Z">
-<meta property="article:modified_time" content="2025-07-04T07:21:04.042Z">
+<meta property="article:modified_time" content="2025-07-04T09:37:19.075Z">
 <meta property="article:author" content="July Tea">
 <meta property="article:tag" content="Notes">
 <meta property="article:tag" content="Neovim">
@@ -182,6 +182,7 @@
 
 <h2 id="二、安装-LazyVim-Starter"><a href="#二、安装-LazyVim-Starter" class="headerlink" title="二、安装 LazyVim Starter"></a>二、安装 LazyVim Starter</h2><p>LazyVim 提供了便捷的启动配置。请参考其官方仓库 <a target="_blank" rel="noopener" href="https://github.com/LazyVim/LazyVim">LazyVim&#x2F;starter</a> 的说明进行安装。截至本文撰写时 (2025-07-04)，步骤如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Clone the starter</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/LazyVim/starter ~/.config/nvim</span><br><span class="line"></span><br><span class="line"><span class="comment"># Remove the .git folder, so you can add it to your own repo later</span></span><br><span class="line"><span class="built_in">rm</span> -rf ~/.config/nvim/.git</span><br><span class="line"></span><br><span class="line"><span class="comment"># Start Neovim!</span></span><br><span class="line">nvim</span><br></pre></td></tr></table></figure>
+
 <p>首次启动时，Neovim 将自动开始下载并安装 LazyVim 的核心插件和依赖。</p>
 <h3 id="完成初始化"><a href="#完成初始化" class="headerlink" title="完成初始化"></a>完成初始化</h3><p>安装完成后，退出并重启 Neovim (<code>:qa</code> 然后再次执行 <code>nvim</code>)。后续可使用 <code>nvim /path/to/folder</code> 打开特定目录。</p>
 <h2 id="三、安装-Nerd-Font-字体"><a href="#三、安装-Nerd-Font-字体" class="headerlink" title="三、安装 Nerd Font 字体"></a>三、安装 Nerd Font 字体</h2><p>LazyVim 界面中的许多图标依赖特殊字体渲染。若未安装，部分图标将显示异常。推荐使用<a target="_blank" rel="noopener" href="https://www.nerdfonts.com/font-downloads">NerdFonts</a>。</p>
@@ -196,7 +197,8 @@
 <h2 id="补充：个性化按键映射（Keymaps）"><a href="#补充：个性化按键映射（Keymaps）" class="headerlink" title="补充：个性化按键映射（Keymaps）"></a>补充：个性化按键映射（Keymaps）</h2><p>因默认的窗口导航 <code>Ctrl - h/j/k/l</code> 和 Buffer 切换 <code>Shift - h/j/k/l</code> 习惯不符合个人偏好，故修改了键位，可供参考。</p>
 <p>编辑配置文件：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvim ~/.config/nvim/init.lua</span><br></pre></td></tr></table></figure>
-<p>在文件末尾添加映射代码： </p>
+
+<p>在文件末尾添加映射代码：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 个性化按键映射</span></span><br><span class="line"><span class="keyword">local</span> map = vim.keymap.set</span><br><span class="line"><span class="keyword">local</span> opts = &#123; noremap = <span class="literal">true</span>, silent = <span class="literal">true</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 切换窗口焦点：Option + ← / Option + → 映射到 Ctrl+h / Ctrl+l</span></span><br><span class="line">map(<span class="string">&quot;n&quot;</span>, <span class="string">&quot;&lt;M-Left&gt;&quot;</span>, <span class="string">&quot;&lt;C-w&gt;h&quot;</span>, opts)</span><br><span class="line">map(<span class="string">&quot;n&quot;</span>, <span class="string">&quot;&lt;M-Right&gt;&quot;</span>, <span class="string">&quot;&lt;C-w&gt;l&quot;</span>, opts)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 切换 Buffer：Shift + ← / Shift + → 映射到 :bprevious / :bnext</span></span><br><span class="line">map(<span class="string">&quot;n&quot;</span>, <span class="string">&quot;&lt;S-Left&gt;&quot;</span>, <span class="string">&quot;:bprevious&lt;CR&gt;&quot;</span>, opts)</span><br><span class="line">map(<span class="string">&quot;n&quot;</span>, <span class="string">&quot;&lt;S-Right&gt;&quot;</span>, <span class="string">&quot;:bnext&lt;CR&gt;&quot;</span>, opts)</span><br></pre></td></tr></table></figure>
 
 <p><code>&quot;n&quot;</code>: 表示在 Normal 模式下生效。</p>
@@ -208,6 +210,7 @@
 <p>保存并生效： 保存文件 (<code>:wq</code>) 后，重启 Neovim。</p>
 <h3 id="补充知识点"><a href="#补充知识点" class="headerlink" title="补充知识点"></a>补充知识点</h3><p>Buffer: 代表一个打开的文件内容。<code>:bnext</code> 和 <code>:bprevious</code> 用于在 已打开的文件列表 (Buffer 列表) 之间切换。即使没有可见的窗口标签页，Buffer 也可以存在。</p>
 <p>Tab: Neovim 中的 Tab 页是一个独立的窗口布局容器，可以包含多个窗口（分割视图）。切换 Tab 应使用 <code>:tabnext</code> &#x2F; <code>:tabprev</code> 或对应快捷键（默认 <code>gt</code> &#x2F; <code>gT</code>）。本文的映射是针对 Buffer 切换，而非 Tab 页切换。</p>
+<p>Rust-Analyzer：如果希望在 Neovim 中使用 Rust 开发功能（如代码补全、跳转定义等），需要安装 rust-analyzer。可以在终端中运行以下命令进行安装：<code>rustup component add rust-analyzer</code>。</p>
 
   </div>
 </article>

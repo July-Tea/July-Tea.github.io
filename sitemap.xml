@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://july-tea.github.io/2025/05/15/%E5%9C%A8-Ubuntu-Server-%E4%B8%8A%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE-PostgreSQL-%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
+    <loc>https://july-tea.github.io/2025/07/04/macOS%20%E4%B8%8B%20Neovim%20%E4%B8%8E%20LazyVim%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/</loc>
     
     <lastmod>2025-07-04</lastmod>
     
@@ -11,7 +11,7 @@
   </url>
   
   <url>
-    <loc>https://july-tea.github.io/2025/07/04/macOS%20%E4%B8%8B%20Neovim%20%E4%B8%8E%20LazyVim%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/</loc>
+    <loc>https://july-tea.github.io/2025/05/15/%E5%9C%A8-Ubuntu-Server-%E4%B8%8A%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE-PostgreSQL-%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
     
     <lastmod>2025-07-04</lastmod>
     
@@ -56,7 +56,7 @@
   </url>
   
   <url>
-    <loc>https://july-tea.github.io/tags/index.html</loc>
+    <loc>https://july-tea.github.io/categories/index.html</loc>
     
     <lastmod>2025-05-21</lastmod>
     
@@ -65,7 +65,7 @@
   </url>
   
   <url>
-    <loc>https://july-tea.github.io/categories/index.html</loc>
+    <loc>https://july-tea.github.io/tags/index.html</loc>
     
     <lastmod>2025-05-21</lastmod>
     
@@ -83,20 +83,6 @@
 
   
   <url>
-    <loc>https://july-tea.github.io/tags/Notes/</loc>
-    <lastmod>2025-07-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://july-tea.github.io/tags/Neovim/</loc>
-    <lastmod>2025-07-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://july-tea.github.io/tags/Learning/</loc>
     <lastmod>2025-07-04</lastmod>
     <changefreq>weekly</changefreq>
@@ -111,7 +97,14 @@
   </url>
   
   <url>
-    <loc>https://july-tea.github.io/tags/Two-Pointers/</loc>
+    <loc>https://july-tea.github.io/tags/Notes/</loc>
+    <lastmod>2025-07-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://july-tea.github.io/tags/Neovim/</loc>
     <lastmod>2025-07-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -131,17 +124,24 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://july-tea.github.io/tags/Two-Pointers/</loc>
+    <lastmod>2025-07-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
-    <loc>https://july-tea.github.io/categories/Tech/</loc>
+    <loc>https://july-tea.github.io/categories/Algorithms/</loc>
     <lastmod>2025-07-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://july-tea.github.io/categories/Algorithms/</loc>
+    <loc>https://july-tea.github.io/categories/Tech/</loc>
     <lastmod>2025-07-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
