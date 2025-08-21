@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="题目描述给定两个字符串 s 和 p，找到 s 中所有 p 的 异位词 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。 异位词 指由相同字母重新排列形成的字符串（包括相同的字符串）。  示例12345输入: s &#x3D; &quot;cbaebabacd&quot;, p &#x3D; &quot;abc&quot;输出: [0,6]解释:起始索引等于 0 的子串是 &quot;cba&quot;, 它是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【算法学习】五、找到字符串中所有字母异位词（Rust 解法）">
+<meta property="og:url" content="https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/index.html">
+<meta property="og:site_name" content="Have a seat, Please">
+<meta property="og:description" content="题目描述给定两个字符串 s 和 p，找到 s 中所有 p 的 异位词 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。 异位词 指由相同字母重新排列形成的字符串（包括相同的字符串）。  示例12345输入: s &#x3D; &quot;cbaebabacd&quot;, p &#x3D; &quot;abc&quot;输出: [0,6]解释:起始索引等于 0 的子串是 &quot;cba&quot;, 它是">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-08-21T08:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-21T07:50:23.740Z">
+<meta property="article:author" content="July Tea">
+<meta property="article:tag" content="Learning">
+<meta property="article:tag" content="Sorting">
+<meta property="article:tag" content="Sliding Window">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/tea.svg">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/tea.svg" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/tea.svg">
+        
+      
+    
+    <!-- title -->
+    <title>【算法学习】五、找到字符串中所有字母异位词（Rust 解法）</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X3P94H593G"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-X3P94H593G');
+  </script>
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Category</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/July-Tea">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E5%9B%9B%E3%80%81%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&text=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&is_video=false&description=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）&body=Check out this article: https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&name=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&t=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E4%B8%80%EF%BC%9A%E6%8E%92%E5%BA%8F%E6%AF%94%E8%BE%83"><span class="toc-number">3.</span> <span class="toc-text">解法一：排序比较</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90"><span class="toc-number">3.1.</span> <span class="toc-text">思路分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-number">3.3.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E4%BA%8C%EF%BC%9A%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3-%E5%AD%97%E7%AC%A6%E8%AE%A1%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">解法二：滑动窗口 + 字符计数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90-1"><span class="toc-number">4.1.</span> <span class="toc-text">思路分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0-1"><span class="toc-number">4.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-1"><span class="toc-number">4.3.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E4%B8%89%EF%BC%9A%E4%BC%98%E5%8C%96%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="toc-number">5.</span> <span class="toc-text">解法三：优化的滑动窗口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90-2"><span class="toc-number">5.1.</span> <span class="toc-text">思路分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0-2"><span class="toc-number">5.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E7%82%B9"><span class="toc-number">5.3.</span> <span class="toc-text">优化点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E6%BC%94%E7%A4%BA"><span class="toc-number">6.</span> <span class="toc-text">算法演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rust-%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">Rust 知识点总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%87%E7%89%87%E6%93%8D%E4%BD%9C"><span class="toc-number">7.1.</span> <span class="toc-text">1. 字符串切片操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%95%B0%E7%BB%84%E4%BD%9C%E4%B8%BA%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">7.2.</span> <span class="toc-text">2. 数组作为计数器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%90%91%E9%87%8F%E6%AF%94%E8%BE%83"><span class="toc-number">7.3.</span> <span class="toc-text">3. 向量比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%AD%97%E7%AC%A6%E5%88%B0%E7%B4%A2%E5%BC%95%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="toc-number">7.4.</span> <span class="toc-text">4. 字符到索引的转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE"><span class="toc-number">8.</span> <span class="toc-text">相关题目</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        【算法学习】五、找到字符串中所有字母异位词（Rust 解法）
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">July Tea</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-08-21T08:00:00.000Z" class="dt-published" itemprop="datePublished">2025-08-21</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Algorithms/">Algorithms</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Learning/" rel="tag">Learning</a>, <a class="p-category" href="/tags/Sliding-Window/" rel="tag">Sliding Window</a>, <a class="p-category" href="/tags/Sorting/" rel="tag">Sorting</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>给定两个字符串 <code>s</code> 和 <code>p</code>，找到 <code>s</code> 中所有 <code>p</code> 的 <strong>异位词</strong> 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。</p>
+<p><strong>异位词</strong> 指由相同字母重新排列形成的字符串（包括相同的字符串）。</p>
+<hr>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">输入: s = &quot;cbaebabacd&quot;, p = &quot;abc&quot;</span><br><span class="line">输出: [0,6]</span><br><span class="line">解释:</span><br><span class="line">起始索引等于 0 的子串是 &quot;cba&quot;, 它是 &quot;abc&quot; 的异位词。</span><br><span class="line">起始索引等于 6 的子串是 &quot;bac&quot;, 它是 &quot;abc&quot; 的异位词。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">输入: s = &quot;abab&quot;, p = &quot;ab&quot;</span><br><span class="line">输出: [0,1,2]</span><br><span class="line">解释:</span><br><span class="line">起始索引等于 0 的子串是 &quot;ab&quot;, 它是 &quot;ab&quot; 的异位词。</span><br><span class="line">起始索引等于 1 的子串是 &quot;ba&quot;, 它是 &quot;ab&quot; 的异位词。</span><br><span class="line">起始索引等于 2 的子串是 &quot;ab&quot;, 它是 &quot;ab&quot; 的异位词。</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="解法一：排序比较"><a href="#解法一：排序比较" class="headerlink" title="解法一：排序比较"></a>解法一：排序比较</h2><h3 id="思路分析"><a href="#思路分析" class="headerlink" title="思路分析"></a>思路分析</h3><p>最直观的方法是：对于 <code>s</code> 中每个长度为 <code>p.len()</code> 的子串，将其排序后与排序后的 <code>p</code> 进行比较。</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Solution</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">find_anagrams</span>(s: <span class="type">String</span>, p: <span class="type">String</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">right_str</span>: <span class="type">Vec</span>&lt;<span class="type">char</span>&gt; = p.<span class="title function_ invoke__">chars</span>().<span class="title function_ invoke__">collect</span>();</span><br><span class="line">        right_str.<span class="title function_ invoke__">sort</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">str_length</span> = p.<span class="title function_ invoke__">len</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">result</span>: <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; = <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> p.<span class="title function_ invoke__">len</span>() &gt; s.<span class="title function_ invoke__">len</span>() &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">vec!</span>[];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..=s.<span class="title function_ invoke__">len</span>() - str_length &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">left_str</span>: <span class="type">Vec</span>&lt;<span class="type">char</span>&gt; = s[i..i + str_length].<span class="title function_ invoke__">chars</span>().<span class="title function_ invoke__">collect</span>();</span><br><span class="line">            left_str.<span class="title function_ invoke__">sort</span>();</span><br><span class="line">            <span class="keyword">if</span> left_str == right_str &#123;</span><br><span class="line">                result.<span class="title function_ invoke__">push</span>(i <span class="keyword">as</span> <span class="type">i32</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(</span><br><span class="line">        <span class="string">&quot;&#123;:#?&#125;&quot;</span>,</span><br><span class="line">        Solution::<span class="title function_ invoke__">find_anagrams</span>(<span class="string">&quot;cbaebabacd&quot;</span>.<span class="title function_ invoke__">to_string</span>(), <span class="string">&quot;abc&quot;</span>.<span class="title function_ invoke__">to_string</span>())</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><ul>
+<li>时间复杂度：O(n × m log m)，其中 n 是 <code>s</code> 的长度，m 是 <code>p</code> 的长度。对于每个子串都需要排序。</li>
+<li>空间复杂度：O(m)，用于存储排序后的字符数组。</li>
+</ul>
+<hr>
+<h2 id="解法二：滑动窗口-字符计数"><a href="#解法二：滑动窗口-字符计数" class="headerlink" title="解法二：滑动窗口 + 字符计数"></a>解法二：滑动窗口 + 字符计数</h2><h3 id="思路分析-1"><a href="#思路分析-1" class="headerlink" title="思路分析"></a>思路分析</h3><p>更高效的方法是使用滑动窗口和字符计数：</p>
+<ol>
+<li>统计 <code>p</code> 中每个字符的出现次数</li>
+<li>使用固定大小的滑动窗口遍历 <code>s</code></li>
+<li>统计窗口中每个字符的出现次数</li>
+<li>比较两个计数数组是否相同</li>
+</ol>
+<h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Solution</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">find_anagrams</span>(s: <span class="type">String</span>, p: <span class="type">String</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">s_chars</span>: <span class="type">Vec</span>&lt;<span class="type">char</span>&gt; = s.<span class="title function_ invoke__">chars</span>().<span class="title function_ invoke__">collect</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">p_chars</span>: <span class="type">Vec</span>&lt;<span class="type">char</span>&gt; = p.<span class="title function_ invoke__">chars</span>().<span class="title function_ invoke__">collect</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">n</span> = s_chars.<span class="title function_ invoke__">len</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">m</span> = p_chars.<span class="title function_ invoke__">len</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">result</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> m &gt; n &#123;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 统计 p 中字符的频率</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">p_count</span> = [<span class="number">0</span>; <span class="number">26</span>];</span><br><span class="line">        <span class="keyword">for</span> &amp;ch <span class="keyword">in</span> &amp;p_chars &#123;</span><br><span class="line">            p_count[(ch <span class="keyword">as</span> <span class="type">u8</span> - <span class="string">b&#x27;a&#x27;</span>) <span class="keyword">as</span> <span class="type">usize</span>] += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 滑动窗口统计 s 中字符的频率</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">window_count</span> = [<span class="number">0</span>; <span class="number">26</span>];</span><br><span class="line">        <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..n &#123;</span><br><span class="line">            <span class="comment">// 添加新字符到窗口</span></span><br><span class="line">            window_count[(s_chars[i] <span class="keyword">as</span> <span class="type">u8</span> - <span class="string">b&#x27;a&#x27;</span>) <span class="keyword">as</span> <span class="type">usize</span>] += <span class="number">1</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 如果窗口大小超过 m，移除最左边的字符</span></span><br><span class="line">            <span class="keyword">if</span> i &gt;= m &#123;</span><br><span class="line">                window_count[(s_chars[i - m] <span class="keyword">as</span> <span class="type">u8</span> - <span class="string">b&#x27;a&#x27;</span>) <span class="keyword">as</span> <span class="type">usize</span>] -= <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 如果窗口大小等于 m，比较频率</span></span><br><span class="line">            <span class="keyword">if</span> i &gt;= m - <span class="number">1</span> &amp;&amp; window_count == p_count &#123;</span><br><span class="line">                result.<span class="title function_ invoke__">push</span>((i - m + <span class="number">1</span>) <span class="keyword">as</span> <span class="type">i32</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="复杂度分析-1"><a href="#复杂度分析-1" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><ul>
+<li>时间复杂度：O(n)，只需要遍历 <code>s</code> 一次</li>
+<li>空间复杂度：O(1)，使用固定大小的数组（26个字母）</li>
+</ul>
+<hr>
+<h2 id="解法三：优化的滑动窗口"><a href="#解法三：优化的滑动窗口" class="headerlink" title="解法三：优化的滑动窗口"></a>解法三：优化的滑动窗口</h2><h3 id="思路分析-2"><a href="#思路分析-2" class="headerlink" title="思路分析"></a>思路分析</h3><p>进一步优化，使用单个变量 <code>matches</code> 来记录匹配的字符数，避免每次都比较整个数组。</p>
+<h3 id="代码实现-2"><a href="#代码实现-2" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Solution</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">find_anagrams</span>(s: <span class="type">String</span>, p: <span class="type">String</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;<span class="type">i32</span>&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">s_chars</span>: <span class="type">Vec</span>&lt;<span class="type">char</span>&gt; = s.<span class="title function_ invoke__">chars</span>().<span class="title function_ invoke__">collect</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">p_chars</span>: <span class="type">Vec</span>&lt;<span class="type">char</span>&gt; = p.<span class="title function_ invoke__">chars</span>().<span class="title function_ invoke__">collect</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">n</span> = s_chars.<span class="title function_ invoke__">len</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">m</span> = p_chars.<span class="title function_ invoke__">len</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">result</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> m &gt; n &#123;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">p_count</span> = [<span class="number">0</span>; <span class="number">26</span>];</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s_count</span> = [<span class="number">0</span>; <span class="number">26</span>];</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 初始化 p 的计数和第一个窗口的计数</span></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..m &#123;</span><br><span class="line">            p_count[(p_chars[i] <span class="keyword">as</span> <span class="type">u8</span> - <span class="string">b&#x27;a&#x27;</span>) <span class="keyword">as</span> <span class="type">usize</span>] += <span class="number">1</span>;</span><br><span class="line">            s_count[(s_chars[i] <span class="keyword">as</span> <span class="type">u8</span> - <span class="string">b&#x27;a&#x27;</span>) <span class="keyword">as</span> <span class="type">usize</span>] += <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">matches</span> = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 计算初始匹配数</span></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">26</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> p_count[i] == s_count[i] &#123;</span><br><span class="line">                matches += <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> m..n &#123;</span><br><span class="line">            <span class="comment">// 如果完全匹配，记录起始位置</span></span><br><span class="line">            <span class="keyword">if</span> matches == <span class="number">26</span> &#123;</span><br><span class="line">                result.<span class="title function_ invoke__">push</span>((i - m) <span class="keyword">as</span> <span class="type">i32</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 处理进入窗口的字符</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">idx</span> = (s_chars[i] <span class="keyword">as</span> <span class="type">u8</span> - <span class="string">b&#x27;a&#x27;</span>) <span class="keyword">as</span> <span class="type">usize</span>;</span><br><span class="line">            s_count[idx] += <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> s_count[idx] == p_count[idx] &#123;</span><br><span class="line">                matches += <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> s_count[idx] - <span class="number">1</span> == p_count[idx] &#123;</span><br><span class="line">                matches -= <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 处理离开窗口的字符</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">idx</span> = (s_chars[i - m] <span class="keyword">as</span> <span class="type">u8</span> - <span class="string">b&#x27;a&#x27;</span>) <span class="keyword">as</span> <span class="type">usize</span>;</span><br><span class="line">            s_count[idx] -= <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> s_count[idx] == p_count[idx] &#123;</span><br><span class="line">                matches += <span class="number">1</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> s_count[idx] + <span class="number">1</span> == p_count[idx] &#123;</span><br><span class="line">                matches -= <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 检查最后一个窗口</span></span><br><span class="line">        <span class="keyword">if</span> matches == <span class="number">26</span> &#123;</span><br><span class="line">            result.<span class="title function_ invoke__">push</span>((n - m) <span class="keyword">as</span> <span class="type">i32</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="优化点"><a href="#优化点" class="headerlink" title="优化点"></a>优化点</h3><ol>
+<li>使用 <code>matches</code> 变量跟踪匹配的字符数</li>
+<li>只需要维护 <code>matches</code>，避免每次比较整个数组</li>
+<li>时间复杂度仍然是 O(n)，但常数因子更小</li>
+</ol>
+<hr>
+<h2 id="算法演示"><a href="#算法演示" class="headerlink" title="算法演示"></a>算法演示</h2><p>以 <code>s = &quot;cbaebabacd&quot;</code>, <code>p = &quot;abc&quot;</code> 为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">p 排序后: &quot;abc&quot;</span><br><span class="line"></span><br><span class="line">遍历 s 的子串：</span><br><span class="line">1. s[0:3] = &quot;cba&quot; → 排序后 &quot;abc&quot; → 匹配 → result = [0]</span><br><span class="line">2. s[1:4] = &quot;bae&quot; → 排序后 &quot;abe&quot; → 不匹配</span><br><span class="line">3. s[2:5] = &quot;aeb&quot; → 排序后 &quot;abe&quot; → 不匹配</span><br><span class="line">4. s[3:6] = &quot;eba&quot; → 排序后 &quot;abe&quot; → 不匹配</span><br><span class="line">5. s[4:7] = &quot;bab&quot; → 排序后 &quot;abb&quot; → 不匹配</span><br><span class="line">6. s[5:8] = &quot;aba&quot; → 排序后 &quot;aab&quot; → 不匹配</span><br><span class="line">7. s[6:9] = &quot;bac&quot; → 排序后 &quot;abc&quot; → 匹配 → result = [0, 6]</span><br><span class="line">8. s[7:10] = &quot;acd&quot; → 排序后 &quot;acd&quot; → 不匹配</span><br><span class="line"></span><br><span class="line">最终结果: [0, 6]</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Rust-知识点总结"><a href="#Rust-知识点总结" class="headerlink" title="Rust 知识点总结"></a>Rust 知识点总结</h2><h3 id="1-字符串切片操作"><a href="#1-字符串切片操作" class="headerlink" title="1. 字符串切片操作"></a>1. 字符串切片操作</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">substring</span> = &amp;s[i..i + length];  <span class="comment">// 获取子串</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-数组作为计数器"><a href="#2-数组作为计数器" class="headerlink" title="2. 数组作为计数器"></a>2. 数组作为计数器</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">count</span> = [<span class="number">0</span>; <span class="number">26</span>];  <span class="comment">// 创建 26 个元素的数组</span></span><br><span class="line">count[(ch <span class="keyword">as</span> <span class="type">u8</span> - <span class="string">b&#x27;a&#x27;</span>) <span class="keyword">as</span> <span class="type">usize</span>] += <span class="number">1</span>;  <span class="comment">// 字符转索引</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-向量比较"><a href="#3-向量比较" class="headerlink" title="3. 向量比较"></a>3. 向量比较</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> vec1 == vec2 &#123;  <span class="comment">// 直接比较两个向量</span></span><br><span class="line">    <span class="comment">// 相等</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-字符到索引的转换"><a href="#4-字符到索引的转换" class="headerlink" title="4. 字符到索引的转换"></a>4. 字符到索引的转换</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将小写字母转换为 0-25 的索引</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">index</span> = (ch <span class="keyword">as</span> <span class="type">u8</span> - <span class="string">b&#x27;a&#x27;</span>) <span class="keyword">as</span> <span class="type">usize</span>;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="相关题目"><a href="#相关题目" class="headerlink" title="相关题目"></a>相关题目</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/valid-anagram/">有效的字母异位词</a></li>
+<li><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/permutation-in-string/">字符串的排列</a></li>
+<li><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/find-all-anagrams-in-a-string/">找到所有字母异位词</a></li>
+</ol>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/categories/">Category</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/July-Tea">Projects</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E4%B8%80%EF%BC%9A%E6%8E%92%E5%BA%8F%E6%AF%94%E8%BE%83"><span class="toc-number">3.</span> <span class="toc-text">解法一：排序比较</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90"><span class="toc-number">3.1.</span> <span class="toc-text">思路分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-number">3.3.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E4%BA%8C%EF%BC%9A%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3-%E5%AD%97%E7%AC%A6%E8%AE%A1%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">解法二：滑动窗口 + 字符计数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90-1"><span class="toc-number">4.1.</span> <span class="toc-text">思路分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0-1"><span class="toc-number">4.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-1"><span class="toc-number">4.3.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%B3%95%E4%B8%89%EF%BC%9A%E4%BC%98%E5%8C%96%E7%9A%84%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="toc-number">5.</span> <span class="toc-text">解法三：优化的滑动窗口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90-2"><span class="toc-number">5.1.</span> <span class="toc-text">思路分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0-2"><span class="toc-number">5.2.</span> <span class="toc-text">代码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E7%82%B9"><span class="toc-number">5.3.</span> <span class="toc-text">优化点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E6%BC%94%E7%A4%BA"><span class="toc-number">6.</span> <span class="toc-text">算法演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rust-%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93"><span class="toc-number">7.</span> <span class="toc-text">Rust 知识点总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%87%E7%89%87%E6%93%8D%E4%BD%9C"><span class="toc-number">7.1.</span> <span class="toc-text">1. 字符串切片操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%95%B0%E7%BB%84%E4%BD%9C%E4%B8%BA%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">7.2.</span> <span class="toc-text">2. 数组作为计数器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%90%91%E9%87%8F%E6%AF%94%E8%BE%83"><span class="toc-number">7.3.</span> <span class="toc-text">3. 向量比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%AD%97%E7%AC%A6%E5%88%B0%E7%B4%A2%E5%BC%95%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="toc-number">7.4.</span> <span class="toc-text">4. 字符到索引的转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%A2%98%E7%9B%AE"><span class="toc-number">8.</span> <span class="toc-text">相关题目</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&text=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&is_video=false&description=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）&body=Check out this article: https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&title=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&name=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://july-tea.github.io/2025/08/21/%E3%80%90%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0%E3%80%91%E4%BA%94%E3%80%81%E6%89%BE%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%89%80%E6%9C%89%E5%AD%97%E6%AF%8D%E5%BC%82%E4%BD%8D%E8%AF%8D%EF%BC%88Rust%20%E8%A7%A3%E6%B3%95%EF%BC%89/&t=【算法学习】五、找到字符串中所有字母异位词（Rust 解法）"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2025
+    July Tea
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">Category</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/July-Tea">Projects</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
